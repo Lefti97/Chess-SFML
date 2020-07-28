@@ -8,6 +8,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <vector>
 #include <iostream>
 #include "board.h"
 #include "piece.h"
@@ -18,9 +19,11 @@ private:
     std::array<Piece, 16> whitePieces;
     std::array<Piece, 16> blackPieces;
     Piece* selectedPiece;
+    std::vector<int> possibleMoves;
 
     bool selected;
 
+    void getPossibleMoves();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

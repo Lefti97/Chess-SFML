@@ -12,6 +12,59 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
 }
 
+void ChessGame::getPossibleMoves(){
+    possibleMoves.clear();
+    int pos{selectedPiece->getPosition()};
+
+    switch (selectedPiece->getType())
+    {
+        case 'K':
+            possibleMoves.push_back(pos+1);
+            possibleMoves.push_back(pos-1);
+            possibleMoves.push_back(pos+9);
+            possibleMoves.push_back(pos-9);
+            possibleMoves.push_back(pos+8);
+            possibleMoves.push_back(pos-8);
+            possibleMoves.push_back(pos+7);
+            possibleMoves.push_back(pos-7);
+            break;
+        case 'Q':
+
+
+
+            break;
+        case 'R':
+
+
+
+
+            break;
+        case 'B':
+
+
+
+
+            break;
+        case 'N':
+
+
+
+
+            break;
+        case 'P':
+            if(selectedPiece->getPlayer()){
+
+            }else{
+                
+            }
+            
+            break;
+        default:
+            std::cerr << "Error piece type does not exist.\n";
+            break;
+    }
+}
+
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
 : board(bordCol1,bordCol2) , selected{false}
 {
@@ -31,7 +84,7 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
 }
 
 bool ChessGame::selectPiece(int pos){
-    std::cout << "selectPiece\n";
+
     for(int i=0; i<16; i++){
         if(whitePieces[i].getPosition() == pos){
             selectedPiece = &whitePieces[i];
@@ -48,21 +101,41 @@ bool ChessGame::selectPiece(int pos){
 
     if(!selected){
         selectedPiece = NULL;
+        possibleMoves.clear();
         std::cout << "No piece there.\n";
         return selected;
     }
 
-    std::cout << selectedPiece->toString();
+    getPossibleMoves();
+    std::cout << "Selected " << selectedPiece->toString();
     return selected;
 }
 
 void ChessGame::moveSelected(int pos){
-    std::cout << "moveSelected\n";
+    bool validMove{false};
+
     if(selectedPiece == NULL)
         return;
     
-    selectedPiece->setPosition(pos);
+    // Check pos with possibleMoves
+    for(int i=0;i<possibleMoves.size();i++){
+        if(pos == possibleMoves.at(i)){
+            validMove = true;
+            break;
+        }
+    }
+
+    if(validMove){
+        selectedPiece->setPosition(pos);
+        std::cout << "Moved " << selectedPiece->toString();
+    }
+    else{
+        std::cout << "Invalid move\n";
+    }
+    
     selectedPiece = NULL;
+    possibleMoves.clear();
     selected = false;
+
 
 }
