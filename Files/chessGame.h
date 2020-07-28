@@ -17,15 +17,21 @@ private:
     Board board;
     std::array<Piece, 16> whitePieces;
     std::array<Piece, 16> blackPieces;
+    Piece* selectedPiece;
+
+    bool selected;
+
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
     ChessGame(sf::Color bordCol1, sf::Color bordCol2);
 
-    void checkPiecePos(int pos);
+    bool getSelected(){return selected;}
 
-    //void restartGame(); TODO
+    bool selectPiece(int pos);
+
+    void moveSelected(int pos);
 
     
 

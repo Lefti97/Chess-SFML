@@ -13,7 +13,7 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 }
 
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
-: board(bordCol1,bordCol2)
+: board(bordCol1,bordCol2) , selected{false}
 {
     whitePieces[0].setPiece('R', true, 56); blackPieces[0].setPiece('R', false, 7);
     whitePieces[1].setPiece('N', true, 57); blackPieces[1].setPiece('N', false, 6);
@@ -30,13 +30,39 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
     }
 }
 
-void ChessGame::checkPiecePos(int pos){
+bool ChessGame::selectPiece(int pos){
+    std::cout << "selectPiece\n";
     for(int i=0; i<16; i++){
         if(whitePieces[i].getPosition() == pos){
-            std::cout << whitePieces[i].toString();
+            selectedPiece = &whitePieces[i];
+            selected = true;
+            break;
         }
         if(blackPieces[i].getPosition() == pos){
-            std::cout << blackPieces[i].toString();
+            selectedPiece = &blackPieces[i];
+            selected = true;
+            break;
         }
+        selected = false;
     }
+
+    if(!selected){
+        selectedPiece = NULL;
+        std::cout << "No piece there.\n";
+        return selected;
+    }
+
+    std::cout << selectedPiece->toString();
+    return selected;
+}
+
+void ChessGame::moveSelected(int pos){
+    std::cout << "moveSelected\n";
+    if(selectedPiece == NULL)
+        return;
+    
+    selectedPiece->setPosition(pos);
+    selectedPiece = NULL;
+    selected = false;
+
 }

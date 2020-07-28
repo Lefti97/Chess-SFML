@@ -22,14 +22,20 @@ int main(){
 
             if(event.type == sf::Event::Closed)
                 window.close();
-                
+
             if(event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
+                    
                     int buttonPos{(event.mouseButton.x/64) + ((event.mouseButton.y/64) * 8)};
+                    
                     std::cout << "--Left button was Pressed.\n";
                     //std::cout << "X: " << event.mouseButton.x/64 << "\tY: " << event.mouseButton.y/64 << '\n';
                     std::cout << "Mouse Board Pos: " << buttonPos <<  '\n' ;
-                    chess.checkPiecePos(buttonPos);
+                    
+                    if(!chess.getSelected())
+                        chess.selectPiece(buttonPos);
+                    else
+                        chess.moveSelected(buttonPos);
                 }
             }
         }
