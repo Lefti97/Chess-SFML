@@ -29,3 +29,14 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
         blackPieces[i].setPiece('P', false, 15 - (i-8) );
     }
 }
+
+void ChessGame::checkPiecePos(int pos){
+    for(int i=0; i<16; i++){
+        if(whitePieces[i].getPosition() == pos){
+            std::cout << whitePieces[i].toString();
+        }
+        if(blackPieces[i].getPosition() == pos){
+            std::cout << blackPieces[i].toString();
+        }
+    }
+}

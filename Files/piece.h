@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "pieceTextures.h"
 
 class Piece : public sf::Drawable{
@@ -27,6 +28,8 @@ public:
 
     void setPosition(int pos){m_position = pos; move();}
     int getPosition()        {return m_position;}
+
+    std::string toString();
 
 private:
     sf::Sprite m_sprite;

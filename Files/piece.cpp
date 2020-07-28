@@ -10,6 +10,46 @@ void Piece::setPiece(char type, bool player, int pos){
     setPosition(pos);
 }
 
+std::string Piece::toString(){
+    std::string str;
+    
+    str += m_player?"White ":"Black ";
+
+    switch (m_type)
+    {
+        case 'K':
+            str += "King ";
+            break;
+        case 'Q':
+            str += "Queen ";
+            break;
+        case 'R':
+            str += "Rook ";
+            break;
+        case 'B':
+            str += "Bishop ";
+            break;
+        case 'N':
+            str += "Knight ";
+            break;
+        case 'P':
+            str += "Pawn ";
+            break;
+        default:
+            str += "??? ";
+            break;
+    }
+
+    //str += "in position " + m_position + '\n';
+    str.append("in position ");
+    str += std::to_string(m_position);
+    str += '\n';
+
+
+    return str;
+
+}
+
 void Piece::move(){
     if(m_position<=-1 || 64<=m_position){
         m_position = -1;
@@ -48,5 +88,5 @@ void Piece::setTexture(){
             break;
     }
     m_sprite.setOrigin(sf::Vector2f(m_sprite.getTexture()->getSize().x/2 , m_sprite.getTexture()->getSize().y/2));
-    m_sprite.setScale(sf::Vector2f(0.4f,0.4f));
+    m_sprite.setScale(sf::Vector2f(0.375f,0.375f));
 }

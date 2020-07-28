@@ -23,6 +23,8 @@ private:
 public:
     ChessGame(sf::Color bordCol1, sf::Color bordCol2);
 
+    void checkPiecePos(int pos);
+
     //void restartGame(); TODO
 
     
