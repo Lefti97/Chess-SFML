@@ -14,7 +14,7 @@ class Piece : public sf::Drawable{
 
 public:
 
-    Piece(char type='P', bool player=true, int pos=0)
+    Piece(char type='P', bool player=true, int pos=-1)
     : m_type{type}, m_player{player}, m_position{pos}
     { }
 
