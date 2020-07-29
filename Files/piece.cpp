@@ -4,10 +4,11 @@
 
 #include "piece.h"
 
-void Piece::setPiece(char type, bool player, int pos){
+void Piece::setPiece(char type, bool player, int pos, bool moved){
     setType(type);
     setPlayer(player);
-    setPosition(pos);
+    setPosition(pos); //m_moved true
+    setMoved(moved); // m_moved false
 }
 
 std::string Piece::toString(){
@@ -57,6 +58,7 @@ void Piece::move(){
     }
     
     m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));
+    m_moved = true;
     return;
 }
 

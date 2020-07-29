@@ -8,17 +8,19 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
 #include "pieceTextures.h"
 
 class Piece : public sf::Drawable{
 
 public:
 
-    Piece(char type='P', bool player=true, int pos=-1)
-    : m_type{type}, m_player{player}, m_position{pos}
+    Piece(char type='P', bool player=true, int pos=-1, bool moved=false)
+    : m_type{type}, m_player{player},
+    m_position{pos}, m_moved{moved}
     { }
 
-    void setPiece(char type, bool player, int pos);
+    void setPiece(char type, bool player, int pos, bool moved=false);
 
     void setType(char ch){m_type = ch; setTexture();}
     char getType()       {return m_type;}
@@ -29,13 +31,20 @@ public:
     void setPosition(int pos){m_position = pos; move();}
     int getPosition()        {return m_position;}
 
+    void setMoved(bool moved){m_moved = moved;}
+    bool getMoved()           {return m_moved;}
+
+    std::vector<int>& getPossibleMoves(){return possibleMoves;}
+
     std::string toString();
 
 private:
     sf::Sprite m_sprite;
+    std::vector<int> possibleMoves;
     char m_type; //'K'=King , 'Q' = Queen , 'R' = Rook , 'B' = Bishop , 'N' = Knight , 'P' = Pawn
     bool m_player; // true == White , false == Black
     int m_position; // 0-63 board, -1 dead
+    bool m_moved;
 
     void setTexture();
     void move();

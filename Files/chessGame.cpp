@@ -12,69 +12,87 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
 }
 
-void ChessGame::getPossibleMoves(){
-    possibleMoves.clear();
-    int pos{selectedPiece->getPosition()};
+void ChessGame::calcPossibleMoves(){
 
-    switch (selectedPiece->getType())
-    {
-        case 'K':
-            if((pos%8) != 0)
-                possibleMoves.push_back(pos-1);
-            if((pos%8) != 7)
-                possibleMoves.push_back(pos+1);
-            if((pos/8) != 0)
-                possibleMoves.push_back(pos-8);
-            if((pos/8) != 7)
-                possibleMoves.push_back(pos+8);
-            if(((pos%8) != 0) && ((pos/8) != 0))
-                possibleMoves.push_back(pos-9);
-            if(((pos%8) != 7) && ((pos/8) != 0))
-                possibleMoves.push_back(pos-7);
-            if(((pos%8) != 0) && ((pos/8) != 7))
-                possibleMoves.push_back(pos+7);
-            if(((pos%8) != 7) && ((pos/8) != 7))
-                possibleMoves.push_back(pos+9);
-            break;
-        case 'Q':
+    for(int i=0; i<32; i++){
+
+        Piece* tmpPiece;
+        if(i<16)
+            tmpPiece = &whitePieces[i];
+        else
+            tmpPiece = &blackPieces[i-16];
+        tmpPiece->getPossibleMoves().clear();
+        int piecePos = tmpPiece->getPosition();
+
+        switch (tmpPiece->getType())
+        {
+            case 'K':
+                // Normal King Moves
+                if((piecePos%8) != 0){
+                    tmpPiece->getPossibleMoves().push_back(piecePos-1);
+                }
+                if((piecePos%8) != 7){
+                    tmpPiece->getPossibleMoves().push_back(piecePos+1);
+                }
+                if((piecePos/8) != 0){
+                    tmpPiece->getPossibleMoves().push_back(piecePos-8);
+                }
+                if((piecePos/8) != 7){
+                    tmpPiece->getPossibleMoves().push_back(piecePos+8);
+                }
+                if(((piecePos%8) != 0) && ((piecePos/8) != 0)){
+                    tmpPiece->getPossibleMoves().push_back(piecePos-9);
+                }
+                if(((piecePos%8) != 7) && ((piecePos/8) != 0)){
+                    tmpPiece->getPossibleMoves().push_back(piecePos-7);
+                }
+                if(((piecePos%8) != 0) && ((piecePos/8) != 7)){
+                    tmpPiece->getPossibleMoves().push_back(piecePos+7);
+                }
+                if(((piecePos%8) != 7) && ((piecePos/8) != 7)){
+                    tmpPiece->getPossibleMoves().push_back(piecePos+9);
+                }
+                //TODO Castling
+                //TODO CheckMating
+                break;
+            case 'Q':
+                //TODO Normal Queen Moving
+
+
+                break;
+            case 'R':
+                //TODO Normal Rook Moving
+                //TODO Castling
+
+
+                break;
+            case 'B':
+                //TODO Normal Bishop Moving
 
 
 
-            break;
-        case 'R':
+                break;
+            case 'N':
+                //TODO Normal Knight Moving
 
 
 
+                break;
+            case 'P':
+                // TODO Pawn Moving Rules, Attackinh, Promotion
+                if(selectedPiece->getPlayer()){
 
-            break;
-        case 'B':
-
-
-
-
-            break;
-        case 'N':
-
-
-
-
-            break;
-        case 'P':
-            if(selectedPiece->getPlayer()){
-
-            }else{
+                }else{
+                    
+                }
                 
-            }
-            
-            break;
-        default:
-            std::cerr << "Error piece type does not exist.\n";
-            break;
+                break;
+            default:
+                std::cerr << "Error piece type does not exist.\n";
+                break;
+        }
     }
 
-    for(int i=0;i<possibleMoves.size();i++)
-        std::cout << possibleMoves.at(i) << ' ';
-    std::cout << '\n';
 }
 
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
@@ -107,6 +125,7 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
         blackPieces[i].setPiece('P', false, 15 - (i-8) );
     }
 
+    calcPossibleMoves();
 }
 
 bool ChessGame::selectPiece(int pos){
@@ -127,13 +146,17 @@ bool ChessGame::selectPiece(int pos){
 
     if(!selected){
         selectedPiece = NULL;
-        possibleMoves.clear();
         std::cout << "No piece there.\n";
         return selected;
     }
 
-    getPossibleMoves();
-    std::cout << "Selected " << selectedPiece->toString();
+    //calcPossibleMoves();
+    std::cout << "Selected " << selectedPiece->toString() << "\nPossible moves : ";
+    
+    for(int i=0;i<selectedPiece->getPossibleMoves().size();i++)
+        std::cout << selectedPiece->getPossibleMoves().at(i) << ' ';
+    std::cout << '\n';
+
     return selected;
 }
 
@@ -143,9 +166,9 @@ void ChessGame::moveSelected(int pos){
     if(selectedPiece == NULL)
         return;
     
-    // Check pos with possibleMoves
-    for(int i=0;i<possibleMoves.size();i++){
-        if(pos == possibleMoves.at(i)){
+    // Check pos with the Piece's possibleMoves
+    for(int i=0;i<selectedPiece->getPossibleMoves().size();i++){
+        if(pos == selectedPiece->getPossibleMoves().at(i)){
             validMove = true;
             break;
         }
@@ -154,13 +177,13 @@ void ChessGame::moveSelected(int pos){
     if(validMove){
         selectedPiece->setPosition(pos);
         std::cout << "Moved " << selectedPiece->toString();
+        calcPossibleMoves();
     }
     else{
         std::cout << "Invalid move\n";
     }
     
     selectedPiece = NULL;
-    possibleMoves.clear();
     selected = false;
 
 
