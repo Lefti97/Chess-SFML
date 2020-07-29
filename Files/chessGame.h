@@ -19,11 +19,13 @@ private:
     std::array<Piece, 16> whitePieces;
     std::array<Piece, 16> blackPieces;
     Piece* selectedPiece;
+    std::vector<sf::RectangleShape> possibleMovesSquares;
     //std::vector<int> possibleMoves;
 
     bool selected;
 
     void calcPossibleMoves();
+    void createMovesSquares();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

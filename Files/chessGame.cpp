@@ -4,6 +4,8 @@
 
 #include "chessGame.h"
 
+
+
 void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     target.draw(board);
     for(int i=0;i<16;i++){
@@ -12,8 +14,11 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
 }
 
+
+
 void ChessGame::calcPossibleMoves(){
 
+    // LOOP for every piece
     for(int i=0; i<32; i++){
 
         Piece* tmpPiece;
@@ -24,36 +29,38 @@ void ChessGame::calcPossibleMoves(){
         tmpPiece->getPossibleMoves().clear();
         int piecePos = tmpPiece->getPosition();
 
+        // Calculate Moves for tmpPiece by piece type
         switch (tmpPiece->getType())
         {
             case 'K':
-                // Normal King Moves
-                if((piecePos%8) != 0){
-                    tmpPiece->getPossibleMoves().push_back(piecePos-1);
+                {// Normal King Moves
+                    if((piecePos%8) != 0){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-1);
+                    }
+                    if((piecePos%8) != 7){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+1);
+                    }
+                    if((piecePos/8) != 0){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-8);
+                    }
+                    if((piecePos/8) != 7){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+8);
+                    }
+                    if(((piecePos%8) != 0) && ((piecePos/8) != 0)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-9);
+                    }
+                    if(((piecePos%8) != 7) && ((piecePos/8) != 0)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-7);
+                    }
+                    if(((piecePos%8) != 0) && ((piecePos/8) != 7)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+7);
+                    }
+                    if(((piecePos%8) != 7) && ((piecePos/8) != 7)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+9);
+                    }
+                    //TODO Castling
+                    //TODO CheckMating
                 }
-                if((piecePos%8) != 7){
-                    tmpPiece->getPossibleMoves().push_back(piecePos+1);
-                }
-                if((piecePos/8) != 0){
-                    tmpPiece->getPossibleMoves().push_back(piecePos-8);
-                }
-                if((piecePos/8) != 7){
-                    tmpPiece->getPossibleMoves().push_back(piecePos+8);
-                }
-                if(((piecePos%8) != 0) && ((piecePos/8) != 0)){
-                    tmpPiece->getPossibleMoves().push_back(piecePos-9);
-                }
-                if(((piecePos%8) != 7) && ((piecePos/8) != 0)){
-                    tmpPiece->getPossibleMoves().push_back(piecePos-7);
-                }
-                if(((piecePos%8) != 0) && ((piecePos/8) != 7)){
-                    tmpPiece->getPossibleMoves().push_back(piecePos+7);
-                }
-                if(((piecePos%8) != 7) && ((piecePos/8) != 7)){
-                    tmpPiece->getPossibleMoves().push_back(piecePos+9);
-                }
-                //TODO Castling
-                //TODO CheckMating
                 break;
             case 'Q':
                 //TODO Normal Queen Moving
@@ -61,10 +68,34 @@ void ChessGame::calcPossibleMoves(){
 
                 break;
             case 'R':
-                //TODO Normal Rook Moving
-                //TODO Castling
+                {
+                    //Normal Rook Moving
+                    int posCounter{1};
+                    // Rook moves on X axis
+                    while( ((piecePos-posCounter) >= 0) && ((piecePos/8) == ((piecePos-posCounter)/8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 1;
+                    }
+                    posCounter = 1;
+                    while( (piecePos/8) == ((piecePos+posCounter)/8) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 1;
+                    }
+                    //Rook moves on Y axis
+                    posCounter = 8;
+                    while(((piecePos-posCounter) >= 0) && (posCounter < 64) && ((piecePos%8) == ((piecePos-posCounter)%8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 8;
+                    }
+                    posCounter = 8;
+                    while(((piecePos+posCounter) <= 63) && (posCounter < 64) && ((piecePos%8) == ((piecePos+posCounter)%8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 8;
+                    }
 
+                    //TODO Castling
 
+                }
                 break;
             case 'B':
                 //TODO Normal Bishop Moving
@@ -94,6 +125,20 @@ void ChessGame::calcPossibleMoves(){
     }
 
 }
+
+
+
+void ChessGame::createMovesSquares(){
+
+    if(selectedPiece == NULL)
+        return;
+
+    
+
+
+}
+
+
 
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
 : board(bordCol1,bordCol2) , selected{false}
@@ -128,6 +173,8 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
     calcPossibleMoves();
 }
 
+
+
 bool ChessGame::selectPiece(int pos){
 
     for(int i=0; i<16; i++){
@@ -146,13 +193,13 @@ bool ChessGame::selectPiece(int pos){
 
     if(!selected){
         selectedPiece = NULL;
-        std::cout << "No piece there.\n";
+        std::cout << "No piece on position "<< pos <<".\n";
         return selected;
     }
 
-    //calcPossibleMoves();
-    std::cout << "Selected " << selectedPiece->toString() << "\nPossible moves : ";
-    
+    std::cout << "Selected " << selectedPiece->toString();
+    std::cout << "Possible moves : ";
+
     for(int i=0;i<selectedPiece->getPossibleMoves().size();i++)
         std::cout << selectedPiece->getPossibleMoves().at(i) << ' ';
     std::cout << '\n';
@@ -160,10 +207,12 @@ bool ChessGame::selectPiece(int pos){
     return selected;
 }
 
+
+
 void ChessGame::moveSelected(int pos){
     bool validMove{false};
 
-    if(selectedPiece == NULL)
+    if((selectedPiece == NULL) || !selected ) //Probably doesnt need both
         return;
     
     // Check pos with the Piece's possibleMoves

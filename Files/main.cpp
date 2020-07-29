@@ -30,7 +30,7 @@ int main(){
                     
                     std::cout << "--Left button was Pressed.\n";
                     //std::cout << "X: " << event.mouseButton.x/64 << "\tY: " << event.mouseButton.y/64 << '\n';
-                    std::cout << "Mouse Board Pos: " << buttonPos <<  '\n' ;
+                    //std::cout << "Mouse Board Pos: " << buttonPos <<  '\n' ;
                     
                     if(!chess.getSelected())
                         chess.selectPiece(buttonPos);
