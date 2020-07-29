@@ -12,6 +12,12 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         target.draw(whitePieces[i]);
         target.draw(blackPieces[i]);
     }
+
+    if((selectedPiece != NULL) && (selected)){
+        for(int i=0; i<possibleMovesSquares.size();i++){
+            target.draw(possibleMovesSquares.at(i));
+        }
+    }
 }
 
 
@@ -93,6 +99,7 @@ void ChessGame::calcPossibleMoves(){
                         posCounter += 8;
                     }
 
+
                     //TODO Castling
 
                 }
@@ -111,11 +118,7 @@ void ChessGame::calcPossibleMoves(){
                 break;
             case 'P':
                 // TODO Pawn Moving Rules, Attackinh, Promotion
-                if(selectedPiece->getPlayer()){
 
-                }else{
-                    
-                }
                 
                 break;
             default:
@@ -133,8 +136,27 @@ void ChessGame::createMovesSquares(){
     if(selectedPiece == NULL)
         return;
 
-    
+    possibleMovesSquares.clear();
 
+    for(int i=0; i<selectedPiece->getPossibleMoves().size();i++){
+        sf::RectangleShape tmp;
+        tmp.setPosition(sf::Vector2f((selectedPiece->getPossibleMoves().at(i) % 8) * 64.f , (selectedPiece->getPossibleMoves().at(i) / 8) * 64.f));
+        tmp.setSize(sf::Vector2f(64.f, 64.f));
+        tmp.setFillColor(sf::Color(0x66b4cc70));
+        //tmp.setOutlineColor(sf::Color::Black);
+        //tmp.setOutlineThickness(-5.f);
+        possibleMovesSquares.push_back(tmp);
+    }
+
+    sf::RectangleShape tmp;
+    tmp.setPosition(sf::Vector2f((selectedPiece->getPosition() % 8) * 64.f , (selectedPiece->getPosition() / 8) * 64.f));
+    tmp.setSize(sf::Vector2f(64.f, 64.f));
+    tmp.setFillColor(sf::Color(0x00000000));
+    tmp.setOutlineColor(sf::Color::Red);
+    tmp.setOutlineThickness(-3.f);
+    possibleMovesSquares.push_back(tmp);
+
+    return;
 
 }
 
@@ -170,7 +192,11 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
         blackPieces[i].setPiece('P', false, 15 - (i-8) );
     }
 
+
+
     calcPossibleMoves();
+    std::cout << "TESTconstructor\n";
+
 }
 
 
@@ -193,6 +219,7 @@ bool ChessGame::selectPiece(int pos){
 
     if(!selected){
         selectedPiece = NULL;
+        possibleMovesSquares.clear();
         std::cout << "No piece on position "<< pos <<".\n";
         return selected;
     }
@@ -203,6 +230,8 @@ bool ChessGame::selectPiece(int pos){
     for(int i=0;i<selectedPiece->getPossibleMoves().size();i++)
         std::cout << selectedPiece->getPossibleMoves().at(i) << ' ';
     std::cout << '\n';
+
+    createMovesSquares();
 
     return selected;
 }

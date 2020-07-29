@@ -24,5 +24,33 @@ Board Grid
     56  57  58  59  60  61  62  63  White Pieces
     
     
+Piece moves (cur , next)
+    White Pawns  (next == pos - 8) ||
+    Black Pawns  (next == pos + 8) ||
+          Rook   (next%8 == pos%8) || (next/8) == (pos/8)      
+          ?Knight next == (pos +- 10) || (pos +- 15) || (pos +- 17) || (pos +- 6)
+          ?Bishop  next == (pos +- 7) || (pos +- 9)
+          ?Queen  (next%8 == pos%8) || (next/8) == (pos/8) || (pos +- 7) || (pos +- 9)
+          King   next == (pos +1 +9 +8 +7 -1 -9 -8 -7) + castling
+          
+          
+       -9  -8  -7
+       -1 King +1
+       +7  +8  +9
+    
+    
+               -8*
+          -1* Rook +1*
+               +8*
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     

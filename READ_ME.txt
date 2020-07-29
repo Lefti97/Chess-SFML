@@ -1,3 +1,4 @@
-CHESS in C++/SFML
+Two player chess made with C++ and SFML(2D Graphics).
 
-    Made By: Lefti
+    Made By Lefti
+        https://github.com/LeftForRed
