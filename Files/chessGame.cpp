@@ -40,84 +40,215 @@ void ChessGame::calcPossibleMoves(){
         {
             case 'K':
                 {// Normal King Moves
-                    if((piecePos%8) != 0){
-                        tmpPiece->getPossibleMoves().push_back(piecePos-1);
+                    if((piecePos / 8) != 0){
+                        tmpPiece->getPossibleMoves().push_back(piecePos - 8);
+                        if((piecePos % 8) != 0)
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 9);
+                        if((piecePos % 8) != 7)
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 7);
                     }
-                    if((piecePos%8) != 7){
-                        tmpPiece->getPossibleMoves().push_back(piecePos+1);
+                    if((piecePos / 8) != 7){
+                        tmpPiece->getPossibleMoves().push_back(piecePos + 8);
+                        if((piecePos % 8) != 0)
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 7);
+                        if((piecePos % 8) != 7)
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 9);
                     }
-                    if((piecePos/8) != 0){
-                        tmpPiece->getPossibleMoves().push_back(piecePos-8);
-                    }
-                    if((piecePos/8) != 7){
-                        tmpPiece->getPossibleMoves().push_back(piecePos+8);
-                    }
-                    if(((piecePos%8) != 0) && ((piecePos/8) != 0)){
-                        tmpPiece->getPossibleMoves().push_back(piecePos-9);
-                    }
-                    if(((piecePos%8) != 7) && ((piecePos/8) != 0)){
-                        tmpPiece->getPossibleMoves().push_back(piecePos-7);
-                    }
-                    if(((piecePos%8) != 0) && ((piecePos/8) != 7)){
-                        tmpPiece->getPossibleMoves().push_back(piecePos+7);
-                    }
-                    if(((piecePos%8) != 7) && ((piecePos/8) != 7)){
-                        tmpPiece->getPossibleMoves().push_back(piecePos+9);
-                    }
+                    if((piecePos % 8) != 0)
+                        tmpPiece->getPossibleMoves().push_back(piecePos - 1);
+                    if((piecePos % 8) != 7)
+                        tmpPiece->getPossibleMoves().push_back(piecePos + 1);
+
+
                     //TODO Castling
                     //TODO CheckMating
                 }
                 break;
             case 'Q':
                 //TODO Normal Queen Moving
-
-
-                break;
-            case 'R':
                 {
-                    //Normal Rook Moving
                     int posCounter{1};
-                    // Rook moves on X axis
+                    // Queen moves left on X axis
                     while( ((piecePos-posCounter) >= 0) && ((piecePos/8) == ((piecePos-posCounter)/8)) ){
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 1;
                     }
+                    // Queen moves right on X axis
                     posCounter = 1;
                     while( (piecePos/8) == ((piecePos+posCounter)/8) ){
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 1;
                     }
-                    //Rook moves on Y axis
+                    //Queen moves up on Y axis
                     posCounter = 8;
                     while(((piecePos-posCounter) >= 0) && (posCounter < 64) && ((piecePos%8) == ((piecePos-posCounter)%8)) ){
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 8;
                     }
+                    //Queen moves down on Y axis
                     posCounter = 8;
                     while(((piecePos+posCounter) <= 63) && (posCounter < 64) && ((piecePos%8) == ((piecePos+posCounter)%8)) ){
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 8;
                     }
-
-
-                    //TODO Castling
-
+                    // Queen moves towards top left
+                    posCounter = 9;
+                    while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) < (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 9;
+                    }
+                    // Queen moves towards bottom right
+                    posCounter = 9;
+                    while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) > (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 9;
+                    }
+                    // Queen moves towards top right
+                    posCounter = 7;
+                    while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) > (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 7;
+                    }
+                    // Queen moves towards bottom left
+                    posCounter = 7;
+                    while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) < (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 7;
+                    }
+                }
+                break;
+            case 'R':
+                {
+                    //Normal Rook Moving
+                    int posCounter{1};
+                    // Rook moves left on X axis
+                    while( ((piecePos-posCounter) >= 0) && ((piecePos/8) == ((piecePos-posCounter)/8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 1;
+                    }
+                    // Rook moves right on X axis
+                    posCounter = 1;
+                    while( (piecePos/8) == ((piecePos+posCounter)/8) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 1;
+                    }
+                    // Rook moves up on Y axis
+                    posCounter = 8;
+                    while(((piecePos-posCounter) >= 0) && (posCounter < 64) && ((piecePos%8) == ((piecePos-posCounter)%8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 8;
+                    }
+                    // Rook moves down on Y axis
+                    posCounter = 8;
+                    while(((piecePos+posCounter) <= 63) && (posCounter < 64) && ((piecePos%8) == ((piecePos+posCounter)%8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 8;
+                    }
                 }
                 break;
             case 'B':
-                //TODO Normal Bishop Moving
-
-
-
+                {
+                    //Normal Bishop Moving
+                    int posCounter{9};
+                    // Bishop moves towards top left
+                    while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) < (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 9;
+                    }
+                    // Bishop moves towards bottom right
+                    posCounter = 9;
+                    while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) > (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 9;
+                    }
+                    // Bishop moves towards top right
+                    posCounter = 7;
+                    while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) > (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                        posCounter += 7;
+                    }
+                    // Bishop moves towards bottom left
+                    posCounter = 7;
+                    while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) < (piecePos % 8)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                        posCounter += 7;
+                    }
+                }
                 break;
             case 'N':
                 //TODO Normal Knight Moving
-
-
-
+                {
+                    if((piecePos / 8) != 0 ){
+                        if((piecePos % 8) >= 2 )
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 10);
+                        if( (piecePos % 8) <= 5 )
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 6);
+                        if((piecePos / 8) != 1){
+                            if((piecePos % 8) >= 1 )
+                                tmpPiece->getPossibleMoves().push_back(piecePos - 17);
+                            if((piecePos % 8) <= 6 )
+                                tmpPiece->getPossibleMoves().push_back(piecePos - 15);
+                        }
+                    }
+                    if((piecePos / 8) != 7){
+                        if((piecePos % 8) >= 2 )
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 6);
+                        if( (piecePos % 8) <= 5 )
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 10);
+                        if((piecePos / 8) != 6){
+                            if((piecePos % 8) >= 1 )
+                                tmpPiece->getPossibleMoves().push_back(piecePos + 15);
+                            if((piecePos % 8) <= 6 )
+                                tmpPiece->getPossibleMoves().push_back(piecePos + 17);
+                        }
+                    }
+                }
                 break;
             case 'P':
                 // TODO Pawn Moving Rules, Attackinh, Promotion
+                {
+                    if (tmpPiece->getPlayer()){ // If pawn is white
+                        
+                        if(!tmpPiece->getMoved())
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 16);
+
+                        if((piecePos / 8) != 0){
+                            tmpPiece->getPossibleMoves().push_back(piecePos - 8);
+                            if((piecePos % 8) != 0){ // must check for black pieces
+                                tmpPiece->getPossibleMoves().push_back(piecePos - 9);
+                            }
+                            if ((piecePos % 8) != 7){ // must check for black pieces
+                                tmpPiece->getPossibleMoves().push_back(piecePos - 7);
+                            }
+                        }
+                        else{ // MUST PROMOTE PAWN
+                            std::cout << "MUST PROMOTE PAWN\n";
+                        }
+                        
+
+                    }
+                    else{ //if pawn is black
+                        if(!tmpPiece->getMoved())
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 16);
+
+                        if((piecePos / 8) != 7){
+                            tmpPiece->getPossibleMoves().push_back(piecePos + 8);
+                            if((piecePos % 8) != 0){ // must check for white pieces
+                                tmpPiece->getPossibleMoves().push_back(piecePos + 7);
+                            }
+                            if ((piecePos % 8) != 7){ // must check for white pieces
+                                tmpPiece->getPossibleMoves().push_back(piecePos + 9);
+                            }
+                        }
+                        else{ // MUST PROMOTE PAWN
+                            std::cout << "MUST PROMOTE PAWN\n";
+                        }
+                    }
+                    
+                    
+
+
+                }
 
                 
                 break;
