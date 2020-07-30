@@ -39,7 +39,8 @@ void ChessGame::calcPossibleMoves(){
         switch (tmpPiece->getType())
         {
             case 'K':
-                {// Normal King Moves
+                {
+                // Normal King Moves
                     if((piecePos / 8) != 0){
                         tmpPiece->getPossibleMoves().push_back(piecePos - 8);
                         if((piecePos % 8) != 0)
@@ -60,6 +61,28 @@ void ChessGame::calcPossibleMoves(){
                         tmpPiece->getPossibleMoves().push_back(piecePos + 1);
 
 
+                // Erase moves on same team pieces
+                    for(int j = 0; j<tmpPiece->getPossibleMoves().size();j++){
+                        
+                        for(int i = 0; i<16; i++){
+                            //std::cout << "King Calc\n";
+
+                            if(tmpPiece->getPlayer()){ // White
+                                if(tmpPiece->getPossibleMoves().at(j) == whitePieces[i].getPosition()){
+                                    tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                                    break;
+                                }
+                            }
+
+                            else{ // Black
+                                if(tmpPiece->getPossibleMoves().at(j) == blackPieces[i].getPosition()){
+                                    tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                                    break;
+                                } 
+                            }
+                        }
+                    }
+
                     //TODO Castling
                     //TODO CheckMating
                 }
@@ -70,48 +93,168 @@ void ChessGame::calcPossibleMoves(){
                     int posCounter{1};
                     // Queen moves left on X axis
                     while( ((piecePos-posCounter) >= 0) && ((piecePos/8) == ((piecePos-posCounter)/8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 1;
                     }
                     // Queen moves right on X axis
                     posCounter = 1;
                     while( (piecePos/8) == ((piecePos+posCounter)/8) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 1;
                     }
                     //Queen moves up on Y axis
                     posCounter = 8;
                     while(((piecePos-posCounter) >= 0) && (posCounter < 64) && ((piecePos%8) == ((piecePos-posCounter)%8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 8;
                     }
                     //Queen moves down on Y axis
                     posCounter = 8;
                     while(((piecePos+posCounter) <= 63) && (posCounter < 64) && ((piecePos%8) == ((piecePos+posCounter)%8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 8;
                     }
                     // Queen moves towards top left
                     posCounter = 9;
                     while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) < (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 9;
                     }
                     // Queen moves towards bottom right
                     posCounter = 9;
                     while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) > (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 9;
                     }
                     // Queen moves towards top right
                     posCounter = 7;
                     while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) > (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 7;
                     }
                     // Queen moves towards bottom left
                     posCounter = 7;
                     while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) < (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 7;
                     }
@@ -123,24 +266,89 @@ void ChessGame::calcPossibleMoves(){
                     int posCounter{1};
                     // Rook moves left on X axis
                     while( ((piecePos-posCounter) >= 0) && ((piecePos/8) == ((piecePos-posCounter)/8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 1;
                     }
+
                     // Rook moves right on X axis
                     posCounter = 1;
                     while( (piecePos/8) == ((piecePos+posCounter)/8) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
+                        std::cout << "Rook move found\n";
+
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 1;
                     }
+
                     // Rook moves up on Y axis
                     posCounter = 8;
                     while(((piecePos-posCounter) >= 0) && (posCounter < 64) && ((piecePos%8) == ((piecePos-posCounter)%8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 8;
                     }
+
                     // Rook moves down on Y axis
                     posCounter = 8;
                     while(((piecePos+posCounter) <= 63) && (posCounter < 64) && ((piecePos%8) == ((piecePos+posCounter)%8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+                        
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 8;
                     }
@@ -152,24 +360,87 @@ void ChessGame::calcPossibleMoves(){
                     int posCounter{9};
                     // Bishop moves towards top left
                     while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) < (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 9;
                     }
+
                     // Bishop moves towards bottom right
                     posCounter = 9;
                     while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) > (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 9;
                     }
+
                     // Bishop moves towards top right
                     posCounter = 7;
                     while( ((piecePos-posCounter) >= 0) && (((piecePos-posCounter) % 8) > (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos-posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos-posCounter);
                         posCounter += 7;
                     }
+
                     // Bishop moves towards bottom left
                     posCounter = 7;
                     while( ((piecePos+posCounter) <= 63) && (((piecePos+posCounter) % 8) < (piecePos % 8)) ){
+                        int i{0};
+                        for(i = 0; i<16; i++){
+                            if(whitePieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != whitePieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                            if(blackPieces[i].getPosition() == (piecePos+posCounter)){
+                                if(tmpPiece->getPlayer() != blackPieces[i].getPlayer())
+                                    tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
+                                break;
+                            }
+                        }
+                        if(i != 16) break;
+
                         tmpPiece->getPossibleMoves().push_back(piecePos+posCounter);
                         posCounter += 7;
                     }
@@ -200,6 +471,27 @@ void ChessGame::calcPossibleMoves(){
                                 tmpPiece->getPossibleMoves().push_back(piecePos + 15);
                             if((piecePos % 8) <= 6 )
                                 tmpPiece->getPossibleMoves().push_back(piecePos + 17);
+                        }
+                    }
+
+                    // Erase moves on same team pieces
+                    for(int j = 0; j<tmpPiece->getPossibleMoves().size();j++){
+                        
+                        for(int i = 0; i<16; i++){
+
+                            if(tmpPiece->getPlayer()){ // White
+                                if(tmpPiece->getPossibleMoves().at(j) == whitePieces[i].getPosition()){
+                                    tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                                    break;
+                                }
+                            }
+
+                            else{ // Black
+                                if(tmpPiece->getPossibleMoves().at(j) == blackPieces[i].getPosition()){
+                                    tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                                    break;
+                                } 
+                            }
                         }
                     }
                 }
