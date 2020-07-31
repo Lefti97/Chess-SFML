@@ -20,9 +20,9 @@ private:
     std::array<Piece, 16> blackPieces;
     Piece* selectedPiece;
     std::vector<sf::RectangleShape> possibleMovesSquares;
-    //std::vector<int> possibleMoves;
 
     bool selected;
+    bool playerTurn; // true = White turn, false = Black Turn
 
     void calcPossibleMoves();
     void createMovesSquares();

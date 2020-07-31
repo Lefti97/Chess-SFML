@@ -54,11 +54,14 @@ std::string Piece::toString(){
 void Piece::move(){
     if(m_position<=-1 || 64<=m_position){
         m_position = -1;
-        std::cout<<"Piece died.\n";
+        m_sprite.setColor(sf::Color(0x00000000));
+        m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));        std::cout<<"Piece died.\n";
+        possibleMoves.clear();
     }
-    
-    m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));
-    m_moved = true;
+    else{
+        m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));
+        m_moved = true;
+    }
     return;
 }
 
