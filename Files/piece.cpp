@@ -57,6 +57,7 @@ void Piece::move(){
         m_sprite.setColor(sf::Color(0x00000000));
         m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));        std::cout<<"Piece died.\n";
         possibleMoves.clear();
+        m_moved = true;
     }
     else{
         m_sprite.setPosition(sf::Vector2f((m_position % 8) * 64.f + 32.f, (m_position / 8) * 64.f + 32.f));
