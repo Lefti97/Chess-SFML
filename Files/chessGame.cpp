@@ -6,7 +6,7 @@
 
 
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
-: board(bordCol1,bordCol2) , selected{false} , playerTurn{true} , whiteCheck{false} , blackCheck(false)
+: board(bordCol1,bordCol2) , selected{false} , playerTurn{true} , playerTurnCheck{false} , mate{false}
 {
     // The code is taking account of these indexes.
     // Changing them may brake normal chess rules.
@@ -68,7 +68,7 @@ void ChessGame::createMovesSquares(){
         sf::RectangleShape tmp;
         tmp.setPosition(sf::Vector2f((selectedPiece->getPossibleMoves().at(i) % 8) * 64.f , (selectedPiece->getPossibleMoves().at(i) / 8) * 64.f));
         tmp.setSize(sf::Vector2f(64.f, 64.f));
-        tmp.setFillColor(sf::Color(0x66b4cc70));
+        tmp.setFillColor(sf::Color(0x66b4cc50));
         possibleMovesSquares.push_back(tmp);
     }
 
@@ -181,6 +181,10 @@ void ChessGame::moveSelected(int pos){
             }
         }
 
+        if(playerTurnCheck){
+            playerTurnCheck = false;
+            std::cout << "King Left Check\n";
+        }
 
         playerTurn = !playerTurn; // Here player turn changes
         calcPossibleMoves();
@@ -191,7 +195,6 @@ void ChessGame::moveSelected(int pos){
     
     selectedPiece = NULL;
     selected = false;
-
 
 }
 
@@ -241,26 +244,10 @@ void ChessGame::calcPossibleMoves(){
         }
     }
 
-    // Must check here for Check
-
-    // Check for Castling, etc
-    for(int x=0; x<32; x++){
-        
-        if(x<16)
-            tmpPiece = &whitePieces[x];
-        else
-            tmpPiece = &blackPieces[x-16];
-        int piecePos = tmpPiece->getPosition();
-
-        if(piecePos == -1)
-            continue;
-
-        if(tmpPiece->getType() == 'K'){
-            calcKingMoves(tmpPiece);
-        }
-    }
-
-
+    // Check for Kings moves
+    // whitePieces[4] is white King , blackPieces[3] is black King
+    calcKingMoves(&whitePieces[4]);
+    calcKingMoves(&blackPieces[3]);
 
     // Erase moves on positions that both kings can make
     // whitePieces[4] is white King , blackPieces[3] is black King
@@ -284,6 +271,11 @@ void ChessGame::calcPossibleMoves(){
             }
         }
     }
+
+
+    checkMate();
+
+    
 
 }
 
@@ -344,7 +336,6 @@ void ChessGame::calcKingMoves(Piece* tmpPiece){
                 if(tmpPiece->getPlayer()){ // White
                     for(o=0; o < blackPieces[i].getPossibleMoves().size();o++){
                         if(tmpPiece->getPossibleMoves().at(j) == blackPieces[i].getPossibleMoves().at(o)){
-                            std::cout << "Checking white king\n";
                             tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
                             break;
                         }
@@ -355,7 +346,6 @@ void ChessGame::calcKingMoves(Piece* tmpPiece){
                 else{ // Black
                     for(o=0; o < whitePieces[i].getPossibleMoves().size();o++){
                         if(tmpPiece->getPossibleMoves().at(j) == whitePieces[i].getPossibleMoves().at(o)){
-                            std::cout << "Checking black king\n";
                             tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
                             break;
                         }
@@ -366,8 +356,6 @@ void ChessGame::calcKingMoves(Piece* tmpPiece){
             }
         }
     }
-
-
 
     calcCastling(tmpPiece);
 
@@ -910,127 +898,206 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
 
 void ChessGame::calcCastling(Piece* tmpPiece){
 
-    if(tmpPiece->getType() != 'K')
+
+    if( playerTurnCheck || (tmpPiece->getType() != 'K') || tmpPiece->getMoved() || (tmpPiece->getPlayer() != playerTurn))
         return;
 
-    if(!tmpPiece->getMoved()){
-        if(tmpPiece->getPlayer()){ // If White King
-            // whitePieces[0] Bot Left Rook, whitePieces[7] Bot Right Rook
-            if(!whitePieces[7].getMoved()){
-                int i{0};
-                for(i=0;i<16;i++){
-                    if((whitePieces[i].getPosition() == 61) || (whitePieces[i].getPosition() == 62)){
-                        i=17;
-                        break;
-                    }
-                    if((blackPieces[i].getPosition() == 61) || (blackPieces[i].getPosition() == 62)){
-                        i = 17;
-                        break;
-                    }
+    
+    if(tmpPiece->getPlayer()){ // If White King
+        // whitePieces[0] Bot Left Rook, whitePieces[7] Bot Right Rook
+        if(!whitePieces[7].getMoved()){
+            int i{0};
+            for(i=0;i<16;i++){
+                if((whitePieces[i].getPosition() == 61) || (whitePieces[i].getPosition() == 62)){
+                    i=17;
+                    break;
                 }
-                if(i == 16){
-                    for(i=0; i<16; i++){
-                        for(int j=0; j<blackPieces[i].getPossibleMoves().size(); j++){
-                            std::cout << "Castle gut" << j <<"\n";
-                            if((blackPieces[i].getPossibleMoves().at(j) == 61) || (blackPieces[i].getPossibleMoves().at(j) == 62) || (blackPieces[i].getPossibleMoves().at(j) == 60)){
-                                i = 17;
-                                break;
-                            }
-                        }
-                        if(i == 17) break;
-                    }
-                }
-                if(i != 17){
-                    
-                    tmpPiece->getPossibleMoves().push_back(62);
+                if((blackPieces[i].getPosition() == 61) || (blackPieces[i].getPosition() == 62)){
+                    i = 17;
+                    break;
                 }
             }
-
-            if(!whitePieces[0].getMoved()){
-                int i{0};
-                for(i=0;i<16;i++){
-                    if((whitePieces[i].getPosition() == 57) || (whitePieces[i].getPosition() == 58) || (whitePieces[i].getPosition() == 59)){
-                        i=17;
-                        break;
-                    }
-                    if((blackPieces[i].getPosition() == 57) || (blackPieces[i].getPosition() == 58) || (blackPieces[i].getPosition() == 59)){
-                        i =17;
-                        break;
-                    }
-                }
-                if(i == 16){
-                    for(i=0; i<16; i++){
-                        for(int j=0; j<blackPieces[i].getPossibleMoves().size(); j++){
-                            if((blackPieces[i].getPossibleMoves().at(j) == 58) || (blackPieces[i].getPossibleMoves().at(j) == 59) || (blackPieces[i].getPossibleMoves().at(j) == 60)){
-                                i = 17;
-                                break;
-                            }
+            if(i == 16){
+                for(i=0; i<16; i++){
+                    for(int j=0; j<blackPieces[i].getPossibleMoves().size(); j++){
+                        std::cout << "Castle gut" << j <<"\n";
+                        if((blackPieces[i].getPossibleMoves().at(j) == 61) || (blackPieces[i].getPossibleMoves().at(j) == 62) || (blackPieces[i].getPossibleMoves().at(j) == 60)){
+                            i = 17;
+                            break;
                         }
-                        if(i == 17) break;
                     }
+                    if(i == 17) break;
                 }
-                if(i != 17){
-                    tmpPiece->getPossibleMoves().push_back(58);
-                }
+            }
+            if(i != 17){
+                
+                tmpPiece->getPossibleMoves().push_back(62);
             }
         }
-        else{ // If Black King
-            // blackPieces[7] Top Left Rook, blackPieces[0] Top Right Rook
-            if(!blackPieces[7].getMoved()){
-                int i{0};
-                for(i=0;i<16;i++){
-                    if((whitePieces[i].getPosition() == 3) || (whitePieces[i].getPosition() == 2) || (whitePieces[i].getPosition() == 1)){
-                        i=17;
-                        break;
-                    }
-                    if((blackPieces[i].getPosition() == 3) || (blackPieces[i].getPosition() == 2) || (blackPieces[i].getPosition() == 1)){
-                        i=17;
-                        break;
-                    }
+
+        if(!whitePieces[0].getMoved()){
+            int i{0};
+            for(i=0;i<16;i++){
+                if((whitePieces[i].getPosition() == 57) || (whitePieces[i].getPosition() == 58) || (whitePieces[i].getPosition() == 59)){
+                    i=17;
+                    break;
                 }
-                if(i == 16){
-                    for(i=0; i<16; i++){
-                        for(int j=0; j<whitePieces[i].getPossibleMoves().size(); j++){
-                            if((whitePieces[i].getPossibleMoves().at(j) == 3) || (whitePieces[i].getPossibleMoves().at(j) == 2) || (whitePieces[i].getPossibleMoves().at(j) == 4)){
-                                i = 17;
-                                break;
-                            }
-                        }
-                        if(i == 17) break;
-                    }
-                }
-                if(i != 17){
-                    tmpPiece->getPossibleMoves().push_back(2);
+                if((blackPieces[i].getPosition() == 57) || (blackPieces[i].getPosition() == 58) || (blackPieces[i].getPosition() == 59)){
+                    i =17;
+                    break;
                 }
             }
-
-            if(!blackPieces[0].getMoved()){
-                int i{0};
-                for(i=0;i<16;i++){
-                    if((whitePieces[i].getPosition() == 5) || (whitePieces[i].getPosition() == 6)){
-                        i=17;
-                        break;
-                    }
-                    if((blackPieces[i].getPosition() == 5) || (blackPieces[i].getPosition() == 6)){
-                        i=17;
-                        break;
-                    }
-                }
-                if(i == 16){
-                    for(i=0; i<16; i++){
-                        for(int j=0; j<whitePieces[i].getPossibleMoves().size(); j++){
-                            if((whitePieces[i].getPossibleMoves().at(j) == 5) || (whitePieces[i].getPossibleMoves().at(j) == 6) || (whitePieces[i].getPossibleMoves().at(j) == 4)){
-                                i = 17;
-                                break;
-                            }
+            if(i == 16){
+                for(i=0; i<16; i++){
+                    for(int j=0; j<blackPieces[i].getPossibleMoves().size(); j++){
+                        if((blackPieces[i].getPossibleMoves().at(j) == 58) || (blackPieces[i].getPossibleMoves().at(j) == 59) || (blackPieces[i].getPossibleMoves().at(j) == 60)){
+                            i = 17;
+                            break;
                         }
-                        if(i == 17) break;
                     }
+                    if(i == 17) break;
                 }
-                if(i != 17){
-                    tmpPiece->getPossibleMoves().push_back(6);
-                }
+            }
+            if(i != 17){
+                tmpPiece->getPossibleMoves().push_back(58);
             }
         }
     }
+    else{ // If Black King
+        // blackPieces[7] Top Left Rook, blackPieces[0] Top Right Rook
+        if(!blackPieces[7].getMoved()){
+            int i{0};
+            for(i=0;i<16;i++){
+                if((whitePieces[i].getPosition() == 3) || (whitePieces[i].getPosition() == 2) || (whitePieces[i].getPosition() == 1)){
+                    i=17;
+                    break;
+                }
+                if((blackPieces[i].getPosition() == 3) || (blackPieces[i].getPosition() == 2) || (blackPieces[i].getPosition() == 1)){
+                    i=17;
+                    break;
+                }
+            }
+            if(i == 16){
+                for(i=0; i<16; i++){
+                    for(int j=0; j<whitePieces[i].getPossibleMoves().size(); j++){
+                        if((whitePieces[i].getPossibleMoves().at(j) == 3) || (whitePieces[i].getPossibleMoves().at(j) == 2) || (whitePieces[i].getPossibleMoves().at(j) == 4)){
+                            i = 17;
+                            break;
+                        }
+                    }
+                    if(i == 17) break;
+                }
+            }
+            if(i != 17){
+                tmpPiece->getPossibleMoves().push_back(2);
+            }
+        }
+
+        if(!blackPieces[0].getMoved()){
+            int i{0};
+            for(i=0;i<16;i++){
+                if((whitePieces[i].getPosition() == 5) || (whitePieces[i].getPosition() == 6)){
+                    i=17;
+                    break;
+                }
+                if((blackPieces[i].getPosition() == 5) || (blackPieces[i].getPosition() == 6)){
+                    i=17;
+                    break;
+                }
+            }
+            if(i == 16){
+                for(i=0; i<16; i++){
+                    for(int j=0; j<whitePieces[i].getPossibleMoves().size(); j++){
+                        if((whitePieces[i].getPossibleMoves().at(j) == 5) || (whitePieces[i].getPossibleMoves().at(j) == 6) || (whitePieces[i].getPossibleMoves().at(j) == 4)){
+                            i = 17;
+                            break;
+                        }
+                    }
+                    if(i == 17) break;
+                }
+            }
+            if(i != 17){
+                tmpPiece->getPossibleMoves().push_back(6);
+            }
+        }
+    }
+}
+
+
+
+
+void ChessGame::checkMate(){
+    // No more than two piece can check a King.
+    // A single check can be unchecked either by the King moving to
+        // a square that is not attacked, or if another piece blocks/kills the attacking piece
+    // A double check can be unchecked only by moving the checked King
+
+    Piece* check1{NULL};
+    Piece* check2{NULL};
+
+    // Check if current player's King is in check
+    // whitePieces[4] is white King , blackPieces[3] is black King
+    for(int i = 0; i<16; i++){
+        if(playerTurn){
+            for(int j=0; j < blackPieces[i].getPossibleMoves().size(); j++){
+                if(whitePieces[4].getPosition() == blackPieces[i].getPossibleMoves().at(j)){
+                    if(check1 == NULL){
+                        playerTurnCheck = true;
+                        check1 = &blackPieces[i];
+                        std::cout << "White King is in check.\n";
+                        break;
+                    }
+                    else if(check2 == NULL){
+                        //playerTurnCheck = true;
+                        check2 = &blackPieces[i];
+                        std::cout << "White King is Double Checked\n";
+                        break;
+                    }
+                }
+            }
+        }
+        else{
+            for(int j=0; j < whitePieces[i].getPossibleMoves().size(); j++){
+                if(blackPieces[3].getPosition() == whitePieces[i].getPossibleMoves().at(j)){
+                    if(check1 == NULL){
+                        playerTurnCheck = true;
+                        check1 = &whitePieces[i];
+                        std::cout << "Black King is in check.\n";
+                        break;
+                    }
+                    else if(check2 == NULL){
+                        //playerTurnCheck = true;
+                        check2 = &whitePieces[i];
+                        std::cout << "Black King is Double Checked\n";
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(check2 != NULL)
+            break;
+    }
+
+    if(check1 != NULL)
+        std::cout << "Check 1: " << check1->toString();
+    if(check2 != NULL)
+        std::cout << "Check 2: " << check2->toString();
+
+    // Check which current player pieces moves put its King out of check
+    // If no moves then Check Mate, current player loses
+    /*if(playerTurnCheck){ 
+
+    }
+    else{ 
+        // Check if current player pieces moves put its King in check
+        // Also if current player is not checked and has no available moves then Stalemate (AKA Draw)
+        
+
+
+    }*/
+
+
+
+
 }

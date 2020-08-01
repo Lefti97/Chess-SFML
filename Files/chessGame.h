@@ -23,8 +23,8 @@ private:
 
     bool selected;
     bool playerTurn; // true = White turn, false = Black Turn
-    bool whiteCheck;
-    bool blackCheck;
+    bool playerTurnCheck;
+    bool mate;
 
     void createMovesSquares();
 
@@ -36,6 +36,8 @@ private:
     void calcKnightMoves(Piece* tmpPiece);
     void calcPawnMoves(Piece* tmpPiece);
     void calcCastling(Piece* tmpPiece);
+
+    void checkMate();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
