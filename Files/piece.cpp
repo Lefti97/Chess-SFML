@@ -41,9 +41,10 @@ std::string Piece::toString(){
             break;
     }
 
-    //str += "in position " + m_position + '\n';
-    str.append("in position ");
-    str += std::to_string(m_position);
+    str += "\nto position\nX: ";
+    str += std::to_string((m_position%8)+1);
+    str += "  Y: ";
+    str += std::to_string((m_position/8)+1);
     str += '\n';
 
 
@@ -67,10 +68,9 @@ void Piece::move(){
 }
 
 void Piece::setTexture(){
+    m_sprite = sf::Sprite();
     switch (m_type)
     {
-        //case '0':
-        //    m_sprite.setTexture(*sf::RectangleShape().getTexture());
         case 'K':
             m_sprite.setTexture(m_player ? PieceTextures::whiteKing : PieceTextures::blackKing);
             break;

@@ -17,7 +17,7 @@ public:
 
     Piece(char type='P', bool player=true, int pos=-1, bool moved=false)
     : m_type{type}, m_player{player},
-    m_position{pos}, m_moved{moved}, enPassant{-1}
+    m_position{-1}, m_moved{true}, enPassant{-1}
     { }
 
     void setPiece(char type, bool player, int pos, bool moved=false);

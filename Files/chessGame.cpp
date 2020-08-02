@@ -6,11 +6,60 @@
 
 
 ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 = sf::Color::Black)
-: board(bordCol1,bordCol2) , selected{false} , playerTurn{true} , playerTurnCheck{false} , mate{false}
+: board(bordCol1,bordCol2)
 {
     // The code is taking account of these indexes.
     // Changing them may brake normal chess rules.
     // Comment out pieces if you want to remove some pieces at beggining.
+
+    font.loadFromFile("arial.ttf");
+    
+    
+    infoRestart.setFillColor(sf::Color::White);
+    infoRestart.setOutlineThickness(-5.f);
+    infoRestart.setOutlineColor(sf::Color::Black);
+    infoRestart.setPosition(sf::Vector2f(512.f,0.f));
+    infoRestart.setSize(sf::Vector2f(256.f, 50.f));
+
+    textRestart.setFont(font);
+    textRestart.setString("RESTART");
+    textRestart.setCharacterSize(24);
+    textRestart.setStyle(sf::Text::Bold);
+    textRestart.setFillColor(sf::Color::Black);
+    textRestart.setPosition(infoRestart.getPosition().x + 75.f, infoRestart.getPosition().y + 10.f);
+
+    textTurn.setFont(font);
+    textTurn.setCharacterSize(24);
+    textTurn.setStyle(sf::Text::Bold);
+    textTurn.setFillColor(sf::Color::White);
+    textTurn.setPosition(530.f, 70.f);
+
+    textSituation.setFont(font);
+    textSituation.setCharacterSize(24);
+    textSituation.setStyle(sf::Text::Bold);
+    textSituation.setFillColor(sf::Color::White);
+    textSituation.setPosition(530.f, 110.f);
+
+    textLastMove.setFont(font);
+    textLastMove.setCharacterSize(24);
+    textLastMove.setStyle(sf::Text::Bold);
+    textLastMove.setFillColor(sf::Color::White);
+    textLastMove.setPosition(530.f, 200.f);
+
+
+    restart();
+
+}
+
+
+
+void ChessGame::restart(){
+
+    selected = false;
+    playerTurn = true;
+    playerTurnCheck = false;
+    mate = false;
+    turn = 1;
 
     blackPieces[0].setPiece('R', false, 7);
     blackPieces[1].setPiece('N', false, 6);
@@ -38,12 +87,50 @@ ChessGame::ChessGame(sf::Color bordCol1 = sf::Color::White, sf::Color bordCol2 =
 
     calcPossibleMoves();
 
+    textLastMove.setString(" ");
+
+
+}
+
+void ChessGame::updateInfo(){
+    textTurn.setString("Turn: " + std::to_string(turn));
+    textLastMove.setString(lastMove);
+
+    if(!mate){
+        if(playerTurn)
+            textSituation.setString("White's Turn");
+        else
+            textSituation.setString("Blacks's Turn");
+        
+        if(playerTurnCheck)
+            textSituation.setString(textSituation.getString() + "\nCheck");
+    }
+    else{
+        if(playerTurnCheck){
+            if(playerTurn)
+                textSituation.setString("CHECKMATE\nBlack Wins");
+            else
+                textSituation.setString("CHECKMATE\nWhite Wins");
+        }
+        else{
+            textSituation.setString("STALEMATE\nIts a DRAW");
+        }
+
+    }
 }
 
 
 
 void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+    target.clear(sf::Color::Black);
+
     target.draw(board);
+    target.draw(infoRestart);
+    target.draw(textRestart);
+    target.draw(textTurn);
+    target.draw(textSituation);
+    target.draw(textLastMove);
+
     for(int i=0;i<16;i++){
         target.draw(whitePieces[i]);
         target.draw(blackPieces[i]);
@@ -110,16 +197,10 @@ bool ChessGame::selectPiece(int pos){
     if(!selected){
         selectedPiece = NULL;
         possibleMovesSquares.clear();
-        std::cout << "No piece on position "<< pos <<".\n";
+        //std::cout << "No piece on position "<< pos <<".\n";
         return selected;
     }
 
-    std::cout << "Selected " << selectedPiece->toString();
-    std::cout << "Possible moves : ";
-
-    for(int i=0;i<selectedPiece->getPossibleMoves().size();i++)
-        std::cout << selectedPiece->getPossibleMoves().at(i) << ' ';
-    std::cout << '\n';
 
     createMovesSquares();
 
@@ -171,11 +252,9 @@ void ChessGame::moveSelected(int pos){
             if(!selectedPiece->getMoved()){
                 if(pos == (selectedPiece->getPosition() - 16)){
                     selectedPiece->setEnPassant(selectedPiece->getPosition() - 8);
-                    std::cout << "En passant possible " << (selectedPiece->getPosition() - 8) <<"\n";
                 }
                 else if(pos == (selectedPiece->getPosition() + 16)){
                     selectedPiece->setEnPassant(selectedPiece->getPosition() + 8);
-                    std::cout << "En passant possible "<< (selectedPiece->getPosition() + 8) << "\n";
                 }
             }
             else{
@@ -204,7 +283,7 @@ void ChessGame::moveSelected(int pos){
         
 
 
-        std::cout << "Moved " << selectedPiece->toString();
+        lastMove = "Last Turn:\n" + selectedPiece->toString();
         for(int i=0; i<16; i++){
             if(selectedPiece->getPlayer()){ // If White
                 if(blackPieces[i].getPosition() == pos){
@@ -224,19 +303,15 @@ void ChessGame::moveSelected(int pos){
 
         if(playerTurnCheck){
             playerTurnCheck = false;
-            std::cout << "King Left Check\n";
         }
 
         playerTurn = !playerTurn; // Here player turn changes
         calcPossibleMoves();
     }
-    else{
-        std::cout << "Invalid move\n";
-    }
     
     selectedPiece = NULL;
     selected = false;
-
+    
 }
 
 
@@ -301,30 +376,8 @@ void ChessGame::calcPossibleMoves(){
     checkMate();
 
     
-    // Temporary thing here
-    for(int i = 0; i<16; i++){
-        if(playerTurn){
-            if(blackPieces[i].getDangerMoves().size() > 1){
-                std::cout << "Black Danger: ";
-                for(int j=0; j<blackPieces[i].getDangerMoves().size();j++){
-                    std::cout << blackPieces[i].getDangerMoves().at(j) << ' ';
-                }
-                std::cout << '\n';
-            }
-        }
-        else{
-            if(whitePieces[i].getDangerMoves().size() > 1){
-                std::cout << "White Danger: ";
-                for(int j=0; j<whitePieces[i].getDangerMoves().size();j++){
-                    std::cout << whitePieces[i].getDangerMoves().at(j) << ' ';
-                }
-                std::cout << '\n';
-            }
-
-        }
-    }
-
-
+    updateInfo();
+    turn++;
 }
 
 
@@ -332,26 +385,26 @@ void ChessGame::calcPossibleMoves(){
 
 void ChessGame::eraseMoves(Piece* tmpPiece){
 
-    if(tmpPiece->getPosition() == 1)
+    if(tmpPiece->getPosition() == -1)
         return;
 
 
     if(tmpPiece->getPlayer() == playerTurn){
         
         // Erase moves on same team pieces
-        for(int j = 0; j<tmpPiece->getPossibleMoves().size();j++){
-            for(int i = 0; i<16; i++){
+        
+        for(int i = 0; i<16; i++){
+            for(int j = 0; j<tmpPiece->getPossibleMoves().size();j++){
 
                 if(tmpPiece->getPlayer()){ // White
                     if(tmpPiece->getPossibleMoves().at(j) == whitePieces[i].getPosition()){
-                        tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                        tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j );
                         break;
                     }
                 }
-
                 else{ // Black
                     if(tmpPiece->getPossibleMoves().at(j) == blackPieces[i].getPosition()){
-                        tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j-- );
+                        tmpPiece->getPossibleMoves().erase( tmpPiece->getPossibleMoves().begin() + j );
                         break;
                     } 
                 }
@@ -436,6 +489,7 @@ void ChessGame::eraseMoves(Piece* tmpPiece){
 void ChessGame::calcKingMoves(Piece* tmpPiece){
 
     int piecePos{tmpPiece->getPosition()};
+    tmpPiece->getPossibleMoves().clear();
 
     if((piecePos / 8) != 0){
         tmpPiece->getPossibleMoves().push_back(piecePos - 8);
@@ -472,6 +526,7 @@ void ChessGame::calcQueenMoves(Piece* tmpPiece){
     bool dangerMove{false};
     bool finishLoop{false};
 
+    tmpPiece->getPossibleMoves().clear();
     tmpPiece->getDangerMoves().clear();
 
     // Queen moves left on X axis
@@ -758,6 +813,7 @@ void ChessGame::calcRookMoves(Piece* tmpPiece){
     bool dangerMove{false};
     bool finishLoop{false};
 
+    tmpPiece->getPossibleMoves().clear();
     tmpPiece->getDangerMoves().clear();
 
     // Rook moves left on X axis
@@ -922,6 +978,7 @@ void ChessGame::calcBishopMoves(Piece* tmpPiece){
     bool dangerMove{false};
     bool finishLoop{false};
 
+    tmpPiece->getPossibleMoves().clear();
     tmpPiece->getDangerMoves().clear();
 
     // Bishop moves towards top left
@@ -1080,6 +1137,8 @@ void ChessGame::calcBishopMoves(Piece* tmpPiece){
 
 void ChessGame::calcKnightMoves(Piece* tmpPiece){
 
+    tmpPiece->getPossibleMoves().clear();
+
     int piecePos{tmpPiece->getPosition()};
 
     if((piecePos / 8) != 0 ){
@@ -1131,7 +1190,8 @@ void ChessGame::calcKnightMoves(Piece* tmpPiece){
 
 void ChessGame::calcPawnMoves(Piece* tmpPiece){
 
-    //TODO check en passant
+    
+    tmpPiece->getPossibleMoves().clear();
 
     int piecePos{tmpPiece->getPosition()};
     
@@ -1184,6 +1244,9 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
         }
         else{ // MUST PROMOTE PAWN
             std::cout << "MUST PROMOTE PAWN\n";
+            tmpPiece->setPiece('Q', tmpPiece->getPlayer(), tmpPiece->getPosition(), true);
+            calcQueenMoves(tmpPiece);
+            return;
         }
         
 
@@ -1238,6 +1301,9 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
         }
         else{ // MUST PROMOTE PAWN
             std::cout << "MUST PROMOTE PAWN\n";
+            tmpPiece->setPiece('Q', tmpPiece->getPlayer(), tmpPiece->getPosition(), true);
+            calcQueenMoves(tmpPiece);
+            return;
         }
     }
 
@@ -1514,32 +1580,32 @@ void ChessGame::checkMate(){
     }
 
     // Check if current player has any available moves
-        int i{0};
-        for(i=0; i<16; i++){
-            if(playerTurn){
-                if(!whitePieces[i].getPossibleMoves().empty())
-                    break;
-            }
-            else{
-                if(!blackPieces[i].getPossibleMoves().empty())
-                    break;
-            }
+    int i{0};
+    for(i=0; i<16; i++){
+        if(playerTurn){
+            if(!whitePieces[i].getPossibleMoves().empty())
+                break;
         }
-        if(i==16){ 
-            mate = true;
+        else{
+            if(!blackPieces[i].getPossibleMoves().empty())
+                break;
+        }
+    }
+    if(i==16){ 
+        mate = true;
 
-            if(playerTurnCheck){
-                
-                if(playerTurn){
-                    std::cout << "CHECKMATE, BLACK WINS\n";
-                }
-                else{
-                    std::cout << "CHECKMATE, WHITE WINS\n";
-                }
+        if(playerTurnCheck){
+            
+            if(playerTurn){
+                std::cout << "CHECKMATE, BLACK WINS\n";
             }
             else{
-                std::cout << "STALEMATE, Its a DRAW\n";
+                std::cout << "CHECKMATE, WHITE WINS\n";
             }
         }
+        else{
+            std::cout << "STALEMATE, Its a DRAW\n";
+        }
+    }
 
 }

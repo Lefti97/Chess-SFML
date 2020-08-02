@@ -20,11 +20,22 @@ private:
     std::array<Piece, 16> blackPieces;
     Piece* selectedPiece;
     std::vector<sf::RectangleShape> possibleMovesSquares;
+    std::string lastMove;
+
+    sf::RectangleShape infoRestart;
+
+    sf::Font font;
+    sf::Text textRestart;
+    sf::Text textTurn;
+    sf::Text textSituation;
+    sf::Text textLastMove;
+    
 
     bool selected;
     bool playerTurn; // true = White turn, false = Black Turn
     bool playerTurnCheck;
     bool mate;
+    int turn;
 
     void createMovesSquares();
 
@@ -41,6 +52,8 @@ private:
 
     void checkMate();
 
+    void updateInfo();
+
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
@@ -54,6 +67,7 @@ public:
 
     void moveSelected(int pos);
 
+    void restart();
     
 
 
