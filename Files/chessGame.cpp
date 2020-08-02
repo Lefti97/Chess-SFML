@@ -1512,21 +1512,10 @@ void ChessGame::checkMate(){
             break;
     }
 
-    if(check1 != NULL){
-        std::cout << "Check 1: " << check1->toString();
-        std::cout << "Danger Moves: ";
-        for(int i = 0; i<check1->getDangerMoves().size(); i++)
-            std::cout <<  check1->getDangerMoves().at(i) << ' ';
-        std::cout << '\n';
-    }
-    if(check2 != NULL)
-        std::cout << "Check 2: " << check2->toString();
-
     // Check which current player pieces moves put its King out of check
     // If no moves then Check Mate, current player loses
     if(playerTurnCheck){
         if(check2 != NULL){ // If double check, clear current player's pieces moves except king's
-            std::cout << "Double check\n";
             if(playerTurn)
                 for(int i=0; i<16; i++)
                     if(whitePieces[i].getType() != 'K')
@@ -1537,7 +1526,6 @@ void ChessGame::checkMate(){
                         blackPieces[i].getPossibleMoves().clear();
         }
         else{ // If single check
-            std::cout << "Single check\n";
 
             for(int j=0; j<16; j++){ // pieces array counter
                 std::vector<int> tmpMoves;
@@ -1577,6 +1565,97 @@ void ChessGame::checkMate(){
                 }
             }
         }
+
+
+        //Bug fix
+        // whitePieces[4] is white King , blackPieces[3] is black King
+        Piece* curKing;
+        if(playerTurn){
+            curKing = &whitePieces[4];
+        }
+        else{
+            curKing = &blackPieces[3];
+        }
+        if(check1 != NULL){
+            if((check1->getType() == 'Q') || (check1->getType() == 'R' || (check1->getType() == 'B'))){
+                int checkPos{check1->getPosition()};
+
+                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                    if(curKing->getPossibleMoves().at(i) != checkPos){
+                        if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
+                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                        else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
+                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                    }
+                }
+
+                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                    if(curKing->getPossibleMoves().at(i) != checkPos){
+                        if((curKing->getPosition()%8) < (checkPos%8)){ // King left of Check
+                            if((curKing->getPosition()/8) < (checkPos/8)){ // King top of Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) < (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) <  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                            else if((checkPos/8) < (curKing->getPosition()/8)){ // King under Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) < (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) >  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                        }
+                        else if((checkPos%8) < (curKing->getPosition()%8) ){ // King right of Check
+                            if((curKing->getPosition()/8) < (checkPos/8)){ // King top of Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) > (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) <  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                            else if((checkPos/8) < (curKing->getPosition()/8)){ // King under Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) > (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) >  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //Bug fix
+        if(check2 != NULL){
+            if((check2->getType() == 'Q') || (check2->getType() == 'R' || (check2->getType() == 'B'))){
+                int checkPos{check2->getPosition()};
+
+                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                    if(curKing->getPossibleMoves().at(i) != checkPos){
+                        if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
+                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                        else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
+                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                    }
+                }
+
+                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                    if(curKing->getPossibleMoves().at(i) != checkPos){
+                        if((curKing->getPosition()%8) < (checkPos%8)){ // King left of Check
+                            if((curKing->getPosition()/8) < (checkPos/8)){ // King top of Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) < (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) <  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                            else if((checkPos/8) < (curKing->getPosition()/8)){ // King under Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) < (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) >  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                        }
+                        else if((checkPos%8) < (curKing->getPosition()%8) ){ // King right of Check
+                            if((curKing->getPosition()/8) < (checkPos/8)){ // King top of Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) > (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) <  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                            else if((checkPos/8) < (curKing->getPosition()/8)){ // King under Check
+                                if( ((curKing->getPossibleMoves().at(i)%8) > (curKing->getPosition()%8)) && ((curKing->getPossibleMoves().at(i)/8) >  (curKing->getPosition()/8))  )
+                                    curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     // Check if current player has any available moves
@@ -1593,19 +1672,6 @@ void ChessGame::checkMate(){
     }
     if(i==16){ 
         mate = true;
-
-        if(playerTurnCheck){
-            
-            if(playerTurn){
-                std::cout << "CHECKMATE, BLACK WINS\n";
-            }
-            else{
-                std::cout << "CHECKMATE, WHITE WINS\n";
-            }
-        }
-        else{
-            std::cout << "STALEMATE, Its a DRAW\n";
-        }
     }
 
 }
