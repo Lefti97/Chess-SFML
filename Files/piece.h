@@ -35,12 +35,15 @@ public:
     bool getMoved()           {return m_moved;}
 
     std::vector<int>& getPossibleMoves(){return possibleMoves;}
+    std::vector<int>& getDangerMoves(){return dangerMoves;}
 
     std::string toString();
 
 private:
     sf::Sprite m_sprite;
     std::vector<int> possibleMoves;
+    std::vector<int> dangerMoves; // Moves that endanger opposite king
+
     char m_type; //'K'=King , 'Q' = Queen , 'R' = Rook , 'B' = Bishop , 'N' = Knight , 'P' = Pawn
     bool m_player; // true == White , false == Black
     int m_position; // 0-63 board, -1 dead

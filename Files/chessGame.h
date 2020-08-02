@@ -37,6 +37,8 @@ private:
     void calcPawnMoves(Piece* tmpPiece);
     void calcCastling(Piece* tmpPiece);
 
+    void eraseMoves(Piece* tmpPiece);
+
     void checkMate();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -45,6 +47,8 @@ public:
     ChessGame(sf::Color bordCol1, sf::Color bordCol2);
 
     bool getSelected(){return selected;}
+
+    bool getMate(){return mate;}
 
     bool selectPiece(int pos);
 
