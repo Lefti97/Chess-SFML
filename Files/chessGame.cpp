@@ -197,7 +197,6 @@ bool ChessGame::selectPiece(int pos){
     if(!selected){
         selectedPiece = NULL;
         possibleMovesSquares.clear();
-        //std::cout << "No piece on position "<< pos <<".\n";
         return selected;
     }
 
@@ -1243,7 +1242,6 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
 
         }
         else{ // MUST PROMOTE PAWN
-            std::cout << "MUST PROMOTE PAWN\n";
             tmpPiece->setPiece('Q', tmpPiece->getPlayer(), tmpPiece->getPosition(), true);
             calcQueenMoves(tmpPiece);
             return;
@@ -1300,7 +1298,6 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
 
         }
         else{ // MUST PROMOTE PAWN
-            std::cout << "MUST PROMOTE PAWN\n";
             tmpPiece->setPiece('Q', tmpPiece->getPlayer(), tmpPiece->getPosition(), true);
             calcQueenMoves(tmpPiece);
             return;
@@ -1477,13 +1474,11 @@ void ChessGame::checkMate(){
                     if(check1 == NULL){
                         playerTurnCheck = true;
                         check1 = &blackPieces[i];
-                        std::cout << "White King is in check.\n";
                         break;
                     }
                     else if(check2 == NULL){
                         //playerTurnCheck = true;
                         check2 = &blackPieces[i];
-                        std::cout << "White King is Double Checked\n";
                         break;
                     }
                 }
@@ -1495,13 +1490,11 @@ void ChessGame::checkMate(){
                     if(check1 == NULL){
                         playerTurnCheck = true;
                         check1 = &whitePieces[i];
-                        std::cout << "Black King is in check.\n";
                         break;
                     }
                     else if(check2 == NULL){
                         //playerTurnCheck = true;
                         check2 = &whitePieces[i];
-                        std::cout << "Black King is Double Checked\n";
                         break;
                     }
                 }
