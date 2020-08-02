@@ -17,7 +17,7 @@ public:
 
     Piece(char type='P', bool player=true, int pos=-1, bool moved=false)
     : m_type{type}, m_player{player},
-    m_position{pos}, m_moved{moved}
+    m_position{pos}, m_moved{moved}, enPassant{-1}
     { }
 
     void setPiece(char type, bool player, int pos, bool moved=false);
@@ -34,6 +34,9 @@ public:
     void setMoved(bool moved){m_moved = moved;}
     bool getMoved()           {return m_moved;}
 
+    void setEnPassant(int x){enPassant = x;}
+    int getEnPassant()      {return enPassant;}
+
     std::vector<int>& getPossibleMoves(){return possibleMoves;}
     std::vector<int>& getDangerMoves(){return dangerMoves;}
 
@@ -47,6 +50,7 @@ private:
     char m_type; //'K'=King , 'Q' = Queen , 'R' = Rook , 'B' = Bishop , 'N' = Knight , 'P' = Pawn
     bool m_player; // true == White , false == Black
     int m_position; // 0-63 board, -1 dead
+    int enPassant;
     bool m_moved;
 
     void setTexture();

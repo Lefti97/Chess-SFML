@@ -161,9 +161,47 @@ void ChessGame::moveSelected(int pos){
                     blackPieces[7].setPosition(3);
             }
         }
+
+
         
-        
+
+        // If Pawn double move (set en passant)
+        // White pawn -16, Black pawn +16
+        if((selectedPiece->getType() == 'P')){
+            if(!selectedPiece->getMoved()){
+                if(pos == (selectedPiece->getPosition() - 16)){
+                    selectedPiece->setEnPassant(selectedPiece->getPosition() - 8);
+                    std::cout << "En passant possible " << (selectedPiece->getPosition() - 8) <<"\n";
+                }
+                else if(pos == (selectedPiece->getPosition() + 16)){
+                    selectedPiece->setEnPassant(selectedPiece->getPosition() + 8);
+                    std::cout << "En passant possible "<< (selectedPiece->getPosition() + 8) << "\n";
+                }
+            }
+            else{
+                for(int i=0; i<16; i++){
+                    if(playerTurn){
+                        if(pos == blackPieces[i].getEnPassant())
+                            blackPieces[i].setPosition(pos);
+                    }
+                    else{
+                        if(pos == whitePieces[i].getEnPassant())
+                            whitePieces[i].setPosition(pos);
+                    }
+                }
+            }
+        }
+        if(selectedPiece->getMoved()){
+            for(int i=0; i<16; i++){
+                whitePieces[i].setEnPassant(-1);
+                blackPieces[i].setEnPassant(-1);
+            }
+        }
+
+
         selectedPiece->setPosition(pos);
+
+        
 
 
         std::cout << "Moved " << selectedPiece->toString();
@@ -181,6 +219,8 @@ void ChessGame::moveSelected(int pos){
                 }
             }
         }
+
+        
 
         if(playerTurnCheck){
             playerTurnCheck = false;
@@ -346,6 +386,47 @@ void ChessGame::eraseMoves(Piece* tmpPiece){
                 }
             }
         }
+
+
+        // Erase moves that put current piece's king in check        
+        if(tmpPiece->getType() != 'K'){
+            for(int i=0; i<16; i++){
+                if     ( playerTurn && (blackPieces[i].getDangerMoves().size() > 1) ){
+                    for(int j=0; j<blackPieces[i].getDangerMoves().size(); j++){
+                        if(blackPieces[i].getDangerMoves().at(j) == tmpPiece->getPosition()){
+                            std::vector<int> tmpMoves;
+                            for(int x=0; x<tmpPiece->getPossibleMoves().size(); x++){
+                                for(int k=0; k<blackPieces[i].getDangerMoves().size(); k++){
+                                    if(tmpPiece->getPossibleMoves().at(x) == blackPieces[i].getDangerMoves().at(k))
+                                        tmpMoves.push_back( tmpPiece->getPossibleMoves().at(x) );
+                                }
+                            }
+                            tmpPiece->getPossibleMoves().clear();
+                            tmpPiece->getPossibleMoves() = tmpMoves;
+                            break;
+                        }
+                    }
+                }
+                else if(!playerTurn && (whitePieces[i].getDangerMoves().size() > 1) ){
+                    for(int j=0; j<whitePieces[i].getDangerMoves().size(); j++){
+                        if(whitePieces[i].getDangerMoves().at(j) == tmpPiece->getPosition()){
+                            std::vector<int> tmpMoves;
+                            for(int x=0; x<tmpPiece->getPossibleMoves().size(); x++){
+                                for(int k=0; k<whitePieces[i].getDangerMoves().size(); k++){
+                                    if(tmpPiece->getPossibleMoves().at(x) == whitePieces[i].getDangerMoves().at(k))
+                                        tmpMoves.push_back( tmpPiece->getPossibleMoves().at(x) );
+                                }
+                            }
+                            tmpPiece->getPossibleMoves().clear();
+                            tmpPiece->getPossibleMoves() = tmpMoves;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }
 
@@ -644,10 +725,16 @@ void ChessGame::calcQueenMoves(Piece* tmpPiece){
         int collisions{0};
         for(int j=0; j<tmpPiece->getDangerMoves().size(); j++){
             for(int i=0; i<16; i++){
-                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition())
+                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition()){
                     collisions++;
-                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition())
+                    if(!tmpPiece->getPlayer())
+                        collisions++;
+                }
+                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition()){
                     collisions++;
+                    if(tmpPiece->getPlayer())
+                        collisions++;
+                }
             }
         }
 
@@ -801,10 +888,16 @@ void ChessGame::calcRookMoves(Piece* tmpPiece){
         int collisions{0};
         for(int j=0; j<tmpPiece->getDangerMoves().size(); j++){
             for(int i=0; i<16; i++){
-                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition())
+                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition()){
                     collisions++;
-                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition())
+                    if(!tmpPiece->getPlayer())
+                        collisions++;
+                }
+                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition()){
                     collisions++;
+                    if(tmpPiece->getPlayer())
+                        collisions++;
+                }
             }
         }
 
@@ -959,10 +1052,16 @@ void ChessGame::calcBishopMoves(Piece* tmpPiece){
         int collisions{0};
         for(int j=0; j<tmpPiece->getDangerMoves().size(); j++){
             for(int i=0; i<16; i++){
-                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition())
+                if(tmpPiece->getDangerMoves().at(j) == blackPieces[i].getPosition()){
                     collisions++;
-                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition())
+                    if(!tmpPiece->getPlayer())
+                        collisions++;
+                }
+                if(tmpPiece->getDangerMoves().at(j) == whitePieces[i].getPosition()){
                     collisions++;
+                    if(tmpPiece->getPlayer())
+                        collisions++;
+                }
             }
         }
 
@@ -1062,12 +1161,20 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
                         tmpPiece->getPossibleMoves().push_back(piecePos - 9);
                         break;
                     }
+                    else if((blackPieces[i].getEnPassant() == (piecePos - 9)) && (blackPieces[i].getEnPassant() != -1)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos - 9);
+                        break;
+                    }
                 }
             }
 
             if((piecePos % 8) != 7){
                 for(i = 0; i<16; i++){
                     if( !playerTurn || (blackPieces[i].getPosition() == (piecePos - 7)) || (whitePieces[i].getPosition() == (piecePos - 7)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos - 7);
+                        break;
+                    }
+                    else if((blackPieces[i].getEnPassant() == (piecePos - 7)) && (blackPieces[i].getEnPassant() != -1)){
                         tmpPiece->getPossibleMoves().push_back(piecePos - 7);
                         break;
                     }
@@ -1108,12 +1215,20 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
                         tmpPiece->getPossibleMoves().push_back(piecePos + 7);
                         break;
                     }
+                    else if((whitePieces[i].getEnPassant() == (piecePos + 7)) && (whitePieces[i].getEnPassant() != -1)){
+                        tmpPiece->getPossibleMoves().push_back(piecePos + 7);
+                        break;
+                    }
                 }                    
             }
 
             if((piecePos % 8) != 7){
                 for(i = 0; i<16; i++){
                     if( playerTurn || (whitePieces[i].getPosition() == (piecePos + 9)) || (blackPieces[i].getPosition() == (piecePos + 9)) ){
+                        tmpPiece->getPossibleMoves().push_back(piecePos + 9);
+                        break;
+                    }
+                    else if((whitePieces[i].getEnPassant() == (piecePos + 9)) && (whitePieces[i].getEnPassant() != -1)){
                         tmpPiece->getPossibleMoves().push_back(piecePos + 9);
                         break;
                     }
@@ -1396,8 +1511,9 @@ void ChessGame::checkMate(){
                 }
             }
         }
+    }
 
-        // Check if current player has any available moves
+    // Check if current player has any available moves
         int i{0};
         for(i=0; i<16; i++){
             if(playerTurn){
@@ -1411,13 +1527,19 @@ void ChessGame::checkMate(){
         }
         if(i==16){ 
             mate = true;
-            if(playerTurn){
-                std::cout << "CHECKMATE, BLACK WINS\n";
+
+            if(playerTurnCheck){
+                
+                if(playerTurn){
+                    std::cout << "CHECKMATE, BLACK WINS\n";
+                }
+                else{
+                    std::cout << "CHECKMATE, WHITE WINS\n";
+                }
             }
             else{
-                std::cout << "CHECKMATE, WHITE WINS\n";
+                std::cout << "STALEMATE, Its a DRAW\n";
             }
         }
 
-    }
 }
