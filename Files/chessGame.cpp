@@ -510,7 +510,7 @@ void ChessGame::calcKingMoves(Piece* tmpPiece){
         tmpPiece->getPossibleMoves().push_back(piecePos + 1);
 
 
-    calcCastling(tmpPiece);
+    //calcCastling(tmpPiece);
 }
 
 
@@ -1329,7 +1329,6 @@ void ChessGame::calcPawnMoves(Piece* tmpPiece){
 
 void ChessGame::calcCastling(Piece* tmpPiece){
 
-
     if( playerTurnCheck || (tmpPiece->getType() != 'K') || tmpPiece->getMoved() || (tmpPiece->getPlayer() != playerTurn))
         return;
 
@@ -1649,6 +1648,10 @@ void ChessGame::checkMate(){
             }
         }
 
+    }
+    else{
+        calcCastling(&whitePieces[4]);
+        calcCastling(&blackPieces[3]);
     }
 
     // Check if current player has any available moves

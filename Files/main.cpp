@@ -11,7 +11,7 @@
 int main(){
     ChessGame chess(sf::Color(0xe6e6e6ff),sf::Color(0x808080ff));
 
-    sf::RenderWindow window(sf::VideoMode(768,512), "The Chess");
+    sf::RenderWindow window(sf::VideoMode(768,512), "Chess");
     window.setVerticalSyncEnabled(true);
 
     while(window.isOpen()){
@@ -42,7 +42,5 @@ int main(){
 
         window.draw(chess);
         window.display();
-
     }
-
 }
