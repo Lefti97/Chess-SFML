@@ -12,8 +12,7 @@ Linux GCC :
 
 
 
-## **Made By Lefti**
-###        **https://github.com/LeftForRed**
+## **Made By Lefti: https://github.com/LeftForRed**
 
 
 Piece textures taken from: 
