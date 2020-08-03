@@ -1572,12 +1572,14 @@ void ChessGame::checkMate(){
             if((check1->getType() == 'Q') || (check1->getType() == 'R' || (check1->getType() == 'B'))){
                 int checkPos{check1->getPosition()};
 
-                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
-                    if(curKing->getPossibleMoves().at(i) != checkPos){
-                        if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
-                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
-                        else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
-                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                if((check1->getType() == 'Q') || (check1->getType() == 'R')){
+                    for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                        if(curKing->getPossibleMoves().at(i) != checkPos){
+                            if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
+                                curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
+                                curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                        }
                     }
                 }
 
@@ -1612,12 +1614,14 @@ void ChessGame::checkMate(){
             if((check2->getType() == 'Q') || (check2->getType() == 'R' || (check2->getType() == 'B'))){
                 int checkPos{check2->getPosition()};
 
-                for(int i=0; i< curKing->getPossibleMoves().size(); i++){
-                    if(curKing->getPossibleMoves().at(i) != checkPos){
-                        if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
-                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
-                        else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
-                            curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                if((check2->getType() == 'Q') || (check2->getType() == 'R')){
+                    for(int i=0; i< curKing->getPossibleMoves().size(); i++){
+                        if(curKing->getPossibleMoves().at(i) != checkPos){
+                            if     ((curKing->getPossibleMoves().at(i) % 8) == (checkPos % 8))
+                                curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                            else if((curKing->getPossibleMoves().at(i) / 8) == (checkPos / 8))
+                                curKing->getPossibleMoves().erase( curKing->getPossibleMoves().begin() + i--);
+                        }
                     }
                 }
 
