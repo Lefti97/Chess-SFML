@@ -7,8 +7,10 @@ https://www.sfml-dev.org/download/sfml/2.5.1/
 I have not tried it on Windows yet.
 
 Linux GCC :
-    g++ -c main.cpp board.cpp piece.cpp pieceTextures.cpp chessGame.cpp
-    g++ main.o board.o piece.o pieceTextures.o chessGame.o -lsfml-graphics -lsfml-window -lsfml-system
+
+    1) g++ -c main.cpp board.cpp piece.cpp pieceTextures.cpp chessGame.cpp
+    2) g++ main.o board.o piece.o pieceTextures.o chessGame.o -lsfml-graphics -lsfml-window -lsfml-system
+    3) ./a.out
 
 
 
