@@ -9,9 +9,9 @@
 
 
 int main(){
-    ChessGame chess(sf::Color(0xe6e6e6ff),sf::Color(0x808080ff));
+    ChessGame chess(sf::Color(0xf3bc7aff),sf::Color(0xae722bff));
 
-    sf::RenderWindow window(sf::VideoMode(768,512), "Chess");
+    sf::RenderWindow window(sf::VideoMode(768,512), "Chess", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     while(window.isOpen()){
@@ -26,7 +26,7 @@ int main(){
             if(event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
                     if((0 <= event.mouseButton.x) && (event.mouseButton.x <= 512) && (0 <= event.mouseButton.y) && (event.mouseButton.y <= 512)){
-                        int buttonPos{(event.mouseButton.x/64) + ((event.mouseButton.y/64) * 8)};
+                        unsigned int buttonPos{(event.mouseButton.x/64) + ((event.mouseButton.y/64) * (8 * (512/window.getSize().y)))};
                                                 
                         if(!chess.getSelected())
                             chess.selectPiece(buttonPos);
