@@ -1,4 +1,4 @@
-Two player chess made with C++ and SFML(2D Graphics).
+# **Two player chess made with C++ and SFML(2D Graphics).**
 
 
 You need to have SFML installed to compile.
@@ -12,8 +12,8 @@ Linux GCC :
 
 
 
-Made By Lefti
-        https://github.com/LeftForRed
+## **Made By Lefti**
+###        **https://github.com/LeftForRed**
 
 
 Piece textures taken from: 
