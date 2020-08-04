@@ -131,15 +131,15 @@ void ChessGame::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     target.draw(textSituation);
     target.draw(textLastMove);
 
-    for(int i=0;i<16;i++){
-        target.draw(whitePieces[i]);
-        target.draw(blackPieces[i]);
-    }
-
     if((selectedPiece != NULL) && (selected)){
         for(int i=0; i<possibleMovesSquares.size();i++){
             target.draw(possibleMovesSquares.at(i));
         }
+    }
+
+    for(int i=0;i<16;i++){
+        target.draw(whitePieces[i]);
+        target.draw(blackPieces[i]);
     }
 }
 
