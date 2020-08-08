@@ -4,9 +4,17 @@
 You need to have SFML installed to compile.
 https://www.sfml-dev.org/download/sfml/2.5.1/
 
-I have not tried it on Windows yet.
+Compile Instructions:
 
-Linux GCC :
+Windows MinGW:
+    
+    1) g++ -c main.cpp board.cpp piece.cpp pieceTextures.cpp chessGame.cpp -I <sfml-install-path>\include -mwindows
+    2) g++ main.o board.o piece.o pieceTextures.o chessGame.o -mwindows -L <sfml-install-path>\lib -lsfml-graphics -lsfml-window -lsfml-system
+    3) You need to have sfml-graphics-2.dll , sfml-system-2.dll and sfml-window-2.dll in the same folder as the exe
+    4) Open a.exe
+
+
+Linux GCC:
 
     1) g++ -c main.cpp board.cpp piece.cpp pieceTextures.cpp chessGame.cpp
     2) g++ main.o board.o piece.o pieceTextures.o chessGame.o -lsfml-graphics -lsfml-window -lsfml-system
