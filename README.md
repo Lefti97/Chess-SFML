@@ -20,6 +20,11 @@ Linux GCC:
     2) g++ main.o board.o piece.o pieceTextures.o chessGame.o -lsfml-graphics -lsfml-window -lsfml-system
     3) ./a.out
 
+CMake:
+
+    1) mkdir build && cd build
+    2) cmake ..
+Your executable should now be in build/src/Chess-SFML. To properly run it you need to place it near the Textures folder.
 
 
 ## **Made By Lefti: https://github.com/LeftForRed**
