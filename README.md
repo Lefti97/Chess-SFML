@@ -27,7 +27,7 @@ CMake:
 Your executable should now be in build/src/Chess-SFML. To properly run it you need to place it near the Textures folder.
 
 
-## **Made By Lefti: https://github.com/LeftForRed**
+## **Made By Lefti: https://github.com/Lefti97**
 
 
 Piece textures taken from: 
