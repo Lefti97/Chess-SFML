@@ -29,9 +29,13 @@ Your executable should now be in build/src/Chess-SFML. To properly run it you ne
 
 ## **Made By Lefti: https://github.com/Lefti97**
 
+## Edited and developed by RezaGooner:
+https://github.com/rezagooner
 
 Piece textures taken from: 
     https://opengameart.org/content/chess-pieces-and-board-squares
     Copyright/Attribution Notice: 
     JohnPablok's improved Cburnett chess set.
 
+Sounds effect taken from:
+https://freesound.org/

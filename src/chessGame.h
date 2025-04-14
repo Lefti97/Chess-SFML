@@ -7,6 +7,7 @@
 #define _CHESSGAME_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <array>
 #include <vector>
 #include <iostream>
@@ -29,13 +30,24 @@ private:
     sf::Text textTurn;
     sf::Text textSituation;
     sf::Text textLastMove;
-    
+
+    sf::SoundBuffer moveBuffer;
+    sf::Sound moveSound;
+    sf::SoundBuffer attackBuffer;
+    sf::Sound attackSound;
+    sf::SoundBuffer checkBuffer;
+    sf::Sound checkSound;
+    sf::SoundBuffer mateBuffer;
+    sf::Sound mateSound;
+
 
     bool selected;
     bool playerTurn; // true = White turn, false = Black Turn
     bool playerTurnCheck;
     bool mate;
     int turn;
+
+    std::vector<int> threateningPiecesPositions;
 
     void createMovesSquares();
 
@@ -58,6 +70,16 @@ private:
 
 public:
     ChessGame(sf::Color bordCol1, sf::Color bordCol2);
+
+    int kingInCheckPosition;
+
+    void playMoveSound();
+
+    void playAttackSound();
+
+    void playCheckSound();
+
+    void playMateSound();
 
     bool getSelected(){return selected;}
 

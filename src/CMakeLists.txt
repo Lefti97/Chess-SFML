@@ -8,7 +8,8 @@ set(FILES
     piece.h
     pieceTextures.cpp
     pieceTextures.h
+    config.h
     )
 
 add_executable(${CMAKE_PROJECT_NAME} ${FILES})
-target_link_libraries(${CMAKE_PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+target_link_libraries(${CMAKE_PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-audio)

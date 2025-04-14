@@ -8,6 +8,7 @@ Board::Board(sf::Color col1, sf::Color col2){
     load(col1,col2);
 }
 
+
 // Member function that sets Board stuff, can choose square colors in parameters
 void Board::load(sf::Color col1, sf::Color col2){
     for(int i=0; i<8;i++){
